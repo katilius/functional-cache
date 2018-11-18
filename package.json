@@ -1,0 +1,22 @@
+{
+  "name": "functional-cache",
+  "version": "0.0.2",
+  "description": "Set of utility functions that let you decorate functions with cache",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katilius/functional-cache.git"
+  },
+  "author": "Arminas Katilius",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "23.6.0",
+    "prettier": "1.15.2"
+  },
+  "dependencies": {
+    "lru-cache": "4.1.3"
+  }
+}
