@@ -50,7 +50,7 @@ By default it will use in-memory cache with 1 minute TTL. This easily configured
 ### `cacheCall(function, options)`
 
 Supported options:
-- `keyProvider` - by default first argument of call is used, this lets customize key generation. It gets all original function arguments and has to result in cache key.
+- `keyGenerator` - by default first argument of call is used, this lets customize key generation. It gets all original function arguments and has to result in cache key.
 - `skipIf` - used for conditional caching, takes all original function arguments and returns boolean value if value should be skipped from cache.
 
 ### `evictOnCall(function, options)`
