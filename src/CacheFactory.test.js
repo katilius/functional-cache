@@ -1,4 +1,4 @@
-const CacheFactory = require("./CacheFactory");
+const cacheFactory = require("./index");
 
 describe("CacheFactory", () => {
   let originalFunction;
@@ -13,7 +13,7 @@ describe("CacheFactory", () => {
   describe("#cacheCalls", () => {
     it("uses first function parameter as cache key", async () => {
       originalFunction.mockReturnValue(Promise.resolve(453535));
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
 
       expect(await cachedFn("key1")).toEqual(453535);
@@ -24,7 +24,7 @@ describe("CacheFactory", () => {
 
     it("supports custom cache key provider", async () => {
       originalFunction.mockReturnValue(TEST_VALUE_1);
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
 
       let config = {
         keyGenerator: value => value.toUpperCase()
@@ -39,7 +39,7 @@ describe("CacheFactory", () => {
 
     it("does not cache if skip condition provided", async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
 
       let config = {
         skipIf: value => value > 100
@@ -55,7 +55,7 @@ describe("CacheFactory", () => {
 
     it("cache value, if skip condition is not met", async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
 
       let config = {
         skipIf: value => value > 100
@@ -75,7 +75,7 @@ describe("CacheFactory", () => {
       const evictFunction = jest.fn();
       originalFunction.mockReturnValue(Promise.resolve(453535));
 
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
       const wrappedEvictFn = cache.evictOnCall(evictFunction);
 
@@ -92,7 +92,7 @@ describe("CacheFactory", () => {
       let config = {
         keyGenerator: value => value.toUpperCase()
       };
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const wrappedEvictFn = cache.evictOnCall(evictFunction, config);
       const cachedFn = cache.cacheCalls(originalFunction);
 
@@ -106,7 +106,7 @@ describe("CacheFactory", () => {
     it("does not evict if skip condition is met", async () => {
       const evictFunction = jest.fn();
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
 
       let config = {
         skipIf: () => true
@@ -128,7 +128,7 @@ describe("CacheFactory", () => {
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
 
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
       const updateField = cache.addResultToCache(updateFieldInDb);
 
@@ -142,7 +142,7 @@ describe("CacheFactory", () => {
 
     it("always calls original function", async () => {
       const updateFieldInDb = jest.fn();
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const updateField = cache.addResultToCache(updateFieldInDb);
 
       await updateField("key1");
@@ -157,7 +157,7 @@ describe("CacheFactory", () => {
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
 
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
       let config = { keyGenerator: arg => arg.toLowerCase() };
       const updateField = cache.addResultToCache(updateFieldInDb, config);
@@ -172,7 +172,7 @@ describe("CacheFactory", () => {
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
 
-      const cache = new CacheFactory();
+      const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
       let config = { skipIf: () => true };
       const updateField = cache.addResultToCache(updateFieldInDb, config);

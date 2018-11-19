@@ -21,8 +21,8 @@ function getBooks(type) {
 With this library you can simply write:
 
 ```javascript
-const CacheFactory =  require("functional-cache").CacheFactory; 
-const cache = new CacheFactory();
+const cacheFactory = require("functional-cache"); 
+const cache = cacheFactory.createNew();
 const getBooks = cache.cacheCalls(getBooksFromApi);
 ```
 
@@ -38,7 +38,7 @@ All wrapped functions should return promise/be async.
 ## Cache creation
 
 ```javascript
-new CacheFactory();
+cache.createNew();
 ```
 
 By default it will use in-memory cache with 1 minute TTL. This easily configured with second parameter, which takes instance of `CacheProvider`. Cache provider has the following interface:
@@ -63,7 +63,7 @@ Supported options:
 Removes value from cache on call based on cache key.
 
 ```javascript
-const cache = new CacheFactory("books-cache");
+const cache = cacheFactory.createNew();
 const getFavoriteBooks = cache.cacheCalls(getBooksFromApi);
 const addToFavorites = cache.evictOnCall(addToFavoritesUsingApi);
 ```
@@ -86,7 +86,7 @@ addToFavorites("scifi", "Hitchhiker's Guide Through the Galaxy");
 Similar to `cacheCalls`, but it never interferes with function execution, it just takes result of the function and puts into cache.
 
 ```javascript
-const cache = new CacheFactory("user-details");
+const cache = cacheFactory.createNew();
 const getUserDetails = cache.cacheCalls(getUserFromDb);
 const updateUserDetails = cache.addResultToCache(updateUserInDb);
 ``` 

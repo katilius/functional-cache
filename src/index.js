@@ -3,7 +3,7 @@ const keyGenerators = require("./keyGenerators");
 const InMemoryCacheProvider = require("./providers/InMemoryCacheProvider");
 
 module.exports = {
-  CacheFactory,
+  createNew: (...args) => new CacheFactory(...args),
   keyGenerators,
   InMemoryCacheProvider
 };
