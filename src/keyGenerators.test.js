@@ -2,7 +2,7 @@ const {
   pickFirstArgument,
   pickNthArgument,
   pickFirstArgumentField
-} = require("./keyProviders");
+} = require("./keyGenerators");
 
 describe("keyGenerators", () => {
   describe("#pickFirstArgument", () => {
