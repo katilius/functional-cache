@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel ./src -d ./dist --ignore **/*.test.js",
     "test": "jest",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "test:publish-coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -24,15 +25,12 @@
     "babel-cli": "6.26.0",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-es2015": "6.24.1",
+    "coveralls": "3.0.2",
     "jest": "23.6.0",
     "prettier": "1.15.2",
     "rimraf": "2.6.2"
   },
   "dependencies": {
     "lru-cache": "4.1.3"
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
   }
 }
