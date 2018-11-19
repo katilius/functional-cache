@@ -20,8 +20,8 @@ function getBooks(type) {
 With this library you can simply write:
 
 ```javascript
-const CacheFactory =  require("funtioncal-cache").CacheFactory; 
-const cache = new CacheFactory("books-cache");
+const CacheFactory =  require("functional-cache").CacheFactory; 
+const cache = new CacheFactory();
 const getBooks = cache.cacheCalls(getBooksFromApi);
 ```
 
