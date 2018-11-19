@@ -68,6 +68,23 @@ describe("CacheFactory", () => {
 
       expect(originalFunction).toHaveBeenCalledTimes(1);
     });
+
+    it("calls original function if getting value from cache fails", async () => {
+      originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
+      const mockCache = {
+        set: jest.fn().mockReturnValue(Promise.resolve()),
+        get: jest.fn().mockReturnValue(Promise.reject("Error"))
+      };
+      const cache = cacheFactory.createNew(mockCache);
+
+      const cachedFn = cache.cacheCalls(originalFunction);
+
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+
+      expect(originalFunction).toHaveBeenCalledTimes(3);
+    });
   });
 
   describe("#evictOnCall", () => {
@@ -80,7 +97,7 @@ describe("CacheFactory", () => {
       const wrappedEvictFn = cache.evictOnCall(evictFunction);
 
       expect(await cachedFn("key1")).toEqual(453535);
-      await wrappedEvictFn(wrappedEvictFn("key1"));
+      await wrappedEvictFn("key1");
       expect(await cachedFn("key1")).toEqual(453535);
 
       expect(originalFunction).toHaveBeenCalledTimes(2);
@@ -119,6 +136,18 @@ describe("CacheFactory", () => {
       expect(await cachedFn(555)).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not fail original call if eviction fails", async () => {
+      const evictFunction = jest.fn();
+      const mockCache = {
+        remove: jest.fn().mockReturnValue(Promise.reject("Error"))
+      };
+      const cache = cacheFactory.createNew(mockCache);
+      const wrappedEvictFn = cache.evictOnCall(evictFunction);
+
+      await wrappedEvictFn("key1");
+      expect(evictFunction).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -180,6 +209,18 @@ describe("CacheFactory", () => {
       expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
       expect(await updateField("key1")).toEqual(TEST_VALUE_2);
       expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
+    });
+
+    it("does not fail original call if adding to cache fails", async () => {
+      const fn = jest.fn();
+      const mockCache = {
+        set: jest.fn().mockReturnValue(Promise.reject("Error"))
+      };
+      const cache = cacheFactory.createNew(mockCache);
+      const wrappedFn = cache.addResultToCache(fn);
+
+      await wrappedFn("key1");
+      expect(fn).toHaveBeenCalledTimes(1);
     });
   });
 });
