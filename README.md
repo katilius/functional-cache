@@ -12,7 +12,7 @@ function getBooks(type) {
   if (cachedValue) {
     return Promise.resolve(cachedValue);
   } else {
-    return getBooksFromApi(type);
+    return getBooksFromApi(type);cacheCalls
   }
 }
 ```
@@ -20,6 +20,7 @@ function getBooks(type) {
 With this library you can simply write:
 
 ```javascript
+const CacheFactory =  require("funtioncal-cache").CacheFactory; 
 const cache = new CacheFactory("books-cache");
 const getBooks = cache.cacheCalls(getBooksFromApi);
 ```
@@ -30,6 +31,9 @@ Aim of this library is to keep original source code the same and encourage extra
 - Custom cache key selection (built in helpers provided)
 - Conditional caching
 
+**Important**
+
+All wrapped functions should return promise/be async. 
 ## Cache creation
 
 ```javascript
@@ -59,7 +63,7 @@ Removes value from cache on call based on cache key.
 
 ```javascript
 const cache = new CacheFactory("books-cache");
-const getFavoriteBooks = cache.cacheCall(getBooksFromApi);
+const getFavoriteBooks = cache.cacheCalls(getBooksFromApi);
 const addToFavorites = cache.evictOnCall(addToFavoritesUsingApi);
 ```
 
@@ -78,10 +82,10 @@ addToFavorites("scifi", "Hitchhiker's Guide Through the Galaxy");
 
 ### `addResultToCache(fn, options)`
 
-Similar to `cacheCall`, but it never interferes with function execution, it just takes result of the function and puts into cache.
+Similar to `cacheCalls`, but it never interferes with function execution, it just takes result of the function and puts into cache.
 
 ```javascript
 const cache = new CacheFactory("user-details");
-const getUserDetails = cache.cacheCall(getUserFromDb);
+const getUserDetails = cache.cacheCalls(getUserFromDb);
 const updateUserDetails = cache.addResultToCache(updateUserInDb);
 ``` 

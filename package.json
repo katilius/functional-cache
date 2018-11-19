@@ -1,6 +1,6 @@
 {
   "name": "functional-cache",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "Set of utility functions that let you decorate functions with cache",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,6 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/katilius/functional-cache.git"
   },
+  "keywords": [
+    "cache",
+    "functional",
+    "evict",
+    "conditional-caching"
+  ],
   "author": "Arminas Katilius",
   "license": "MIT",
   "devDependencies": {
