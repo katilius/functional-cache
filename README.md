@@ -1,4 +1,4 @@
-# Functional Cache
+# Functional Cache [![Build Status](https://travis-ci.org/katilius/functional-cache.svg?branch=master)](https://travis-ci.org/katilius/functional-cache)
 
 Collection of helper functions that help you cache long running functions. Main goal of this library is to separate concerns between caching and business logic. It is inspired by functional programming memoization pattern, which let's you simply wrap function and optimize performance.
 
