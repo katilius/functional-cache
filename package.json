@@ -1,10 +1,12 @@
 {
   "name": "functional-cache",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Set of utility functions that let you decorate functions with cache",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": "jest"
+    "build": "babel ./src -d ./dist --ignore **/*.test.js",
+    "test": "jest",
+    "clean": "rimraf dist"
   },
   "repository": {
     "type": "git",
@@ -13,8 +15,12 @@
   "author": "Arminas Katilius",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "babel-preset-es2015": "6.24.1",
     "jest": "23.6.0",
-    "prettier": "1.15.2"
+    "prettier": "1.15.2",
+    "rimraf": "2.6.2"
   },
   "dependencies": {
     "lru-cache": "4.1.3"

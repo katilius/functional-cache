@@ -47,7 +47,7 @@ By default it will use in-memory cache with 1 minute TTL. This easily configured
 
 ## Cache functions
 
-### `cacheCall(function, options)`
+### `cacheCalls(function, options)`
 
 Supported options:
 - `keyGenerator` - by default first argument of call is used, this lets customize key generation. It gets all original function arguments and has to result in cache key.
