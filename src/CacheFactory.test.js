@@ -94,6 +94,26 @@ describe("CacheFactory", () => {
       );
     });
 
+    it("does not fail call if setting cache value fails", async () => {
+      originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
+      const mockCache = {
+        set: jest.fn().mockReturnValue(Promise.reject("Error")),
+        get: jest.fn().mockReturnValue(Promise.resolve())
+      };
+      const cache = cacheFactory.createNew(mockCache);
+      cache.setLogger(mockLogger);
+      const cachedFn = cache.cacheCalls(originalFunction);
+
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+
+      expect(originalFunction).toHaveBeenCalledTimes(2);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Could not set value in cache",
+        "Error"
+      );
+    });
+
     it("uses passed on cache provider with custom settings", async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const cache = cacheFactory.createNew(

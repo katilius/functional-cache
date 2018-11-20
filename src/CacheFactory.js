@@ -22,7 +22,7 @@ module.exports = class CacheFactory {
     this.logger = noopLogger;
   }
 
-  setLogger(logger){
+  setLogger(logger) {
     this.logger = logger;
   }
 
@@ -44,7 +44,11 @@ module.exports = class CacheFactory {
         return value;
       } else {
         const value = await fn(...args);
-        await this.cache.set(key, value);
+        try {
+          await this.cache.set(key, value);
+        } catch (e) {
+          this.logger.error("Could not set value in cache", e);
+        }
         return value;
       }
     }.bind(this);
