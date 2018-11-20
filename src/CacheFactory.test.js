@@ -1,4 +1,5 @@
 const cacheFactory = require("./index");
+const { InMemoryCacheProvider, keyGenerators } = require("./index");
 
 describe("CacheFactory", () => {
   let originalFunction;
@@ -82,6 +83,20 @@ describe("CacheFactory", () => {
       expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
       expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
       expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+
+      expect(originalFunction).toHaveBeenCalledTimes(3);
+    });
+
+    it("uses passed on cache provider with custom settings", async () => {
+      originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
+      const cache = cacheFactory.createNew(new InMemoryCacheProvider({
+        max: 1
+      }));
+      const cachedFn = cache.cacheCalls(originalFunction);
+
+      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn("key2")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(3);
     });
@@ -187,13 +202,13 @@ describe("CacheFactory", () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
 
       const cache = cacheFactory.createNew();
-      const cachedFn = cache.cacheCalls(originalFunction);
-      let config = { keyGenerator: arg => arg.toLowerCase() };
-      const updateField = cache.addResultToCache(updateFieldInDb, config);
+      let options = { keyGenerator: keyGenerators.pickNthArgument(1) };
+      const cachedFn = cache.cacheCalls(originalFunction, options);
+      const updateField = cache.addResultToCache(updateFieldInDb, options);
 
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
-      expect(await updateField("KEY1")).toEqual(TEST_VALUE_2);
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_2);
+      expect(await cachedFn("test", "key1")).toEqual(TEST_VALUE_1);
+      expect(await updateField("anything", "key1")).toEqual(TEST_VALUE_2);
+      expect(await cachedFn("else", "key1")).toEqual(TEST_VALUE_2);
     });
 
     it("does not add value to cache if skip condition is met", async () => {
