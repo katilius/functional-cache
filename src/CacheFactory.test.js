@@ -2,13 +2,16 @@ const cacheFactory = require("./index");
 const { InMemoryCacheProvider, keyGenerators } = require("./index");
 
 describe("CacheFactory", () => {
-  let originalFunction;
+  let originalFunction, mockLogger;
 
   const TEST_VALUE_1 = "test-value-1";
   const TEST_VALUE_2 = "test-value-2";
 
   beforeEach(() => {
     originalFunction = jest.fn();
+    mockLogger = {
+      error: jest.fn()
+    };
   });
 
   describe("#cacheCalls", () => {
@@ -77,7 +80,7 @@ describe("CacheFactory", () => {
         get: jest.fn().mockReturnValue(Promise.reject("Error"))
       };
       const cache = cacheFactory.createNew(mockCache);
-
+      cache.setLogger(mockLogger);
       const cachedFn = cache.cacheCalls(originalFunction);
 
       expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
@@ -85,13 +88,19 @@ describe("CacheFactory", () => {
       expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(3);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Could not get value from cache",
+        "Error"
+      );
     });
 
     it("uses passed on cache provider with custom settings", async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
-      const cache = cacheFactory.createNew(new InMemoryCacheProvider({
-        max: 1
-      }));
+      const cache = cacheFactory.createNew(
+        new InMemoryCacheProvider({
+          max: 1
+        })
+      );
       const cachedFn = cache.cacheCalls(originalFunction);
 
       expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
@@ -159,10 +168,15 @@ describe("CacheFactory", () => {
         remove: jest.fn().mockReturnValue(Promise.reject("Error"))
       };
       const cache = cacheFactory.createNew(mockCache);
+      cache.setLogger(mockLogger);
       const wrappedEvictFn = cache.evictOnCall(evictFunction);
 
       await wrappedEvictFn("key1");
       expect(evictFunction).toHaveBeenCalledTimes(1);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Could not remove log entry",
+        "Error"
+      );
     });
   });
 
@@ -232,10 +246,15 @@ describe("CacheFactory", () => {
         set: jest.fn().mockReturnValue(Promise.reject("Error"))
       };
       const cache = cacheFactory.createNew(mockCache);
+      cache.setLogger(mockLogger);
       const wrappedFn = cache.addResultToCache(fn);
 
       await wrappedFn("key1");
       expect(fn).toHaveBeenCalledTimes(1);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Could not add value to cache",
+        "Error"
+      );
     });
   });
 });
