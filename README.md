@@ -1,4 +1,4 @@
-# Functional Cache [![Build Status](https://travis-ci.org/katilius/functional-cache.svg?branch=master)](https://travis-ci.org/katilius/functional-cache) [![Coverage Status](https://coveralls.io/repos/github/katilius/functional-cache/badge.svg?branch=master)](https://coveralls.io/github/katilius/functional-cache?branch=master)
+# Functional Cache [![Build Status](https://travis-ci.org/katilius/functional-cache.svg?branch=master)](https://travis-ci.org/katilius/functional-cache) [![Coverage Status](https://coveralls.io/repos/github/katilius/functional-cache/badge.svg?branch=master)](https://coveralls.io/github/katilius/functional-cache?branch=master) [![npm version](https://badge.fury.io/js/functional-cache.svg)](https://badge.fury.io/js/functional-cache)
 
 
 Collection of helper functions that help you cache long running functions. Main goal of this library is to separate concerns between caching and business logic. It is inspired by functional programming memoization pattern, which let's you simply wrap function and optimize performance.
