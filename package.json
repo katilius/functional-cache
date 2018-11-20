@@ -1,9 +1,10 @@
 {
   "name": "functional-cache",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Set of utility functions that let you decorate functions with cache",
   "main": "./dist/index.js",
   "scripts": {
+    "prepublishOnly": "npm run test && npm run clean && npm run build",
     "build": "babel ./src -d ./dist --ignore **/*.test.js",
     "test": "jest",
     "clean": "rimraf dist",
