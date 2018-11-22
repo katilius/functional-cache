@@ -1,11 +1,11 @@
-const cacheFactory = require("./index");
-const { InMemoryCacheProvider, keyGenerators } = require("./index");
+const cacheFactory = require('./index');
+const { InMemoryCacheProvider, keyGenerators } = require('./index');
 
-describe("CacheFactory", () => {
+describe('CacheFactory', () => {
   let originalFunction, mockLogger;
 
-  const TEST_VALUE_1 = "test-value-1";
-  const TEST_VALUE_2 = "test-value-2";
+  const TEST_VALUE_1 = 'test-value-1';
+  const TEST_VALUE_2 = 'test-value-2';
 
   beforeEach(() => {
     originalFunction = jest.fn();
@@ -14,19 +14,19 @@ describe("CacheFactory", () => {
     };
   });
 
-  describe("#cacheCalls", () => {
-    it("uses first function parameter as cache key", async () => {
+  describe('#cacheCalls', () => {
+    it('uses first function parameter as cache key', async () => {
       originalFunction.mockReturnValue(Promise.resolve(453535));
       const cache = cacheFactory.createNew();
       const cachedFn = cache.cacheCalls(originalFunction);
 
-      expect(await cachedFn("key1")).toEqual(453535);
-      expect(await cachedFn("key1")).toEqual(453535);
+      expect(await cachedFn('key1')).toEqual(453535);
+      expect(await cachedFn('key1')).toEqual(453535);
 
       expect(originalFunction).toHaveBeenCalledTimes(1);
     });
 
-    it("supports custom cache key provider", async () => {
+    it('supports custom cache key provider', async () => {
       originalFunction.mockReturnValue(TEST_VALUE_1);
       const cache = cacheFactory.createNew();
 
@@ -35,13 +35,13 @@ describe("CacheFactory", () => {
       };
       const cachedFn = cache.cacheCalls(originalFunction, config);
 
-      expect(await cachedFn("apple")).toEqual(TEST_VALUE_1);
-      expect(await cachedFn("APPLE")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('apple')).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('APPLE')).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(1);
     });
 
-    it("does not cache if skip condition provided", async () => {
+    it('does not cache if skip condition provided', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const cache = cacheFactory.createNew();
 
@@ -57,7 +57,7 @@ describe("CacheFactory", () => {
       expect(originalFunction).toHaveBeenCalledTimes(3);
     });
 
-    it("cache value, if skip condition is not met", async () => {
+    it('cache value, if skip condition is not met', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const cache = cacheFactory.createNew();
 
@@ -73,11 +73,11 @@ describe("CacheFactory", () => {
       expect(originalFunction).toHaveBeenCalledTimes(1);
     });
 
-    it("calls original function if getting value from cache fails", async () => {
+    it('calls original function if getting value from cache fails', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const mockCache = {
         set: jest.fn().mockReturnValue(Promise.resolve()),
-        get: jest.fn().mockReturnValue(Promise.reject("Error"))
+        get: jest.fn().mockReturnValue(Promise.reject('Error'))
       };
       const cache = cacheFactory.createNew(mockCache);
       cache.setLogger(mockLogger);
@@ -89,15 +89,15 @@ describe("CacheFactory", () => {
 
       expect(originalFunction).toHaveBeenCalledTimes(3);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "Could not get value from cache",
-        "Error"
+        'Could not get value from cache',
+        'Error'
       );
     });
 
-    it("does not fail call if setting cache value fails", async () => {
+    it('does not fail call if setting cache value fails', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const mockCache = {
-        set: jest.fn().mockReturnValue(Promise.reject("Error")),
+        set: jest.fn().mockReturnValue(Promise.reject('Error')),
         get: jest.fn().mockReturnValue(Promise.resolve())
       };
       const cache = cacheFactory.createNew(mockCache);
@@ -109,12 +109,12 @@ describe("CacheFactory", () => {
 
       expect(originalFunction).toHaveBeenCalledTimes(2);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "Could not set value in cache",
-        "Error"
+        'Could not set value in cache',
+        'Error'
       );
     });
 
-    it("uses passed on cache provider with custom settings", async () => {
+    it('uses passed on cache provider with custom settings', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const cache = cacheFactory.createNew(
         new InMemoryCacheProvider({
@@ -123,16 +123,16 @@ describe("CacheFactory", () => {
       );
       const cachedFn = cache.cacheCalls(originalFunction);
 
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
-      expect(await cachedFn("key2")).toEqual(TEST_VALUE_1);
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('key2')).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(3);
     });
   });
 
-  describe("#evictOnCall", () => {
-    it("removes value from cache, once evict function is called", async () => {
+  describe('#evictOnCall', () => {
+    it('removes value from cache, once evict function is called', async () => {
       const evictFunction = jest.fn();
       originalFunction.mockReturnValue(Promise.resolve(453535));
 
@@ -140,14 +140,14 @@ describe("CacheFactory", () => {
       const cachedFn = cache.cacheCalls(originalFunction);
       const wrappedEvictFn = cache.evictOnCall(evictFunction);
 
-      expect(await cachedFn("key1")).toEqual(453535);
-      await wrappedEvictFn("key1");
-      expect(await cachedFn("key1")).toEqual(453535);
+      expect(await cachedFn('key1')).toEqual(453535);
+      await wrappedEvictFn('key1');
+      expect(await cachedFn('key1')).toEqual(453535);
 
       expect(originalFunction).toHaveBeenCalledTimes(2);
     });
 
-    it("supports custom cache key provider", async () => {
+    it('supports custom cache key provider', async () => {
       const evictFunction = jest.fn();
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       let config = {
@@ -157,14 +157,14 @@ describe("CacheFactory", () => {
       const wrappedEvictFn = cache.evictOnCall(evictFunction, config);
       const cachedFn = cache.cacheCalls(originalFunction);
 
-      expect(await cachedFn("APPLE")).toEqual(TEST_VALUE_1);
-      await wrappedEvictFn("apple");
-      expect(await cachedFn("APPLE")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('APPLE')).toEqual(TEST_VALUE_1);
+      await wrappedEvictFn('apple');
+      expect(await cachedFn('APPLE')).toEqual(TEST_VALUE_1);
 
       expect(originalFunction).toHaveBeenCalledTimes(2);
     });
 
-    it("does not evict if skip condition is met", async () => {
+    it('does not evict if skip condition is met', async () => {
       const evictFunction = jest.fn();
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const cache = cacheFactory.createNew();
@@ -182,26 +182,26 @@ describe("CacheFactory", () => {
       expect(originalFunction).toHaveBeenCalledTimes(1);
     });
 
-    it("does not fail original call if eviction fails", async () => {
+    it('does not fail original call if eviction fails', async () => {
       const evictFunction = jest.fn();
       const mockCache = {
-        remove: jest.fn().mockReturnValue(Promise.reject("Error"))
+        remove: jest.fn().mockReturnValue(Promise.reject('Error'))
       };
       const cache = cacheFactory.createNew(mockCache);
       cache.setLogger(mockLogger);
       const wrappedEvictFn = cache.evictOnCall(evictFunction);
 
-      await wrappedEvictFn("key1");
+      await wrappedEvictFn('key1');
       expect(evictFunction).toHaveBeenCalledTimes(1);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "Could not remove log entry",
-        "Error"
+        'Could not remove log entry',
+        'Error'
       );
     });
   });
 
-  describe("#addResultToCache", () => {
-    it("adds returned value to cache", async () => {
+  describe('#addResultToCache', () => {
+    it('adds returned value to cache', async () => {
       const updateFieldInDb = jest.fn();
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
@@ -210,27 +210,27 @@ describe("CacheFactory", () => {
       const cachedFn = cache.cacheCalls(originalFunction);
       const updateField = cache.addResultToCache(updateFieldInDb);
 
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
-      expect(await updateField("key1")).toEqual(TEST_VALUE_2);
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_2);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_1);
+      expect(await updateField('key1')).toEqual(TEST_VALUE_2);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_2);
 
       expect(originalFunction).toHaveBeenCalledTimes(1);
       expect(updateFieldInDb).toHaveBeenCalledTimes(1);
     });
 
-    it("always calls original function", async () => {
+    it('always calls original function', async () => {
       const updateFieldInDb = jest.fn();
       const cache = cacheFactory.createNew();
       const updateField = cache.addResultToCache(updateFieldInDb);
 
-      await updateField("key1");
-      await updateField("key1");
-      await updateField("key1");
+      await updateField('key1');
+      await updateField('key1');
+      await updateField('key1');
 
       expect(updateFieldInDb).toHaveBeenCalledTimes(3);
     });
 
-    it("supports custom cache key provider", async () => {
+    it('supports custom cache key provider', async () => {
       const updateFieldInDb = jest.fn();
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
@@ -240,12 +240,12 @@ describe("CacheFactory", () => {
       const cachedFn = cache.cacheCalls(originalFunction, options);
       const updateField = cache.addResultToCache(updateFieldInDb, options);
 
-      expect(await cachedFn("test", "key1")).toEqual(TEST_VALUE_1);
-      expect(await updateField("anything", "key1")).toEqual(TEST_VALUE_2);
-      expect(await cachedFn("else", "key1")).toEqual(TEST_VALUE_2);
+      expect(await cachedFn('test', 'key1')).toEqual(TEST_VALUE_1);
+      expect(await updateField('anything', 'key1')).toEqual(TEST_VALUE_2);
+      expect(await cachedFn('else', 'key1')).toEqual(TEST_VALUE_2);
     });
 
-    it("does not add value to cache if skip condition is met", async () => {
+    it('does not add value to cache if skip condition is met', async () => {
       const updateFieldInDb = jest.fn();
       updateFieldInDb.mockReturnValue(Promise.resolve(TEST_VALUE_2));
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
@@ -255,25 +255,25 @@ describe("CacheFactory", () => {
       let config = { skipIf: () => true };
       const updateField = cache.addResultToCache(updateFieldInDb, config);
 
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
-      expect(await updateField("key1")).toEqual(TEST_VALUE_2);
-      expect(await cachedFn("key1")).toEqual(TEST_VALUE_1);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_1);
+      expect(await updateField('key1')).toEqual(TEST_VALUE_2);
+      expect(await cachedFn('key1')).toEqual(TEST_VALUE_1);
     });
 
-    it("does not fail original call if adding to cache fails", async () => {
+    it('does not fail original call if adding to cache fails', async () => {
       const fn = jest.fn();
       const mockCache = {
-        set: jest.fn().mockReturnValue(Promise.reject("Error"))
+        set: jest.fn().mockReturnValue(Promise.reject('Error'))
       };
       const cache = cacheFactory.createNew(mockCache);
       cache.setLogger(mockLogger);
       const wrappedFn = cache.addResultToCache(fn);
 
-      await wrappedFn("key1");
+      await wrappedFn('key1');
       expect(fn).toHaveBeenCalledTimes(1);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "Could not add value to cache",
-        "Error"
+        'Could not add value to cache',
+        'Error'
       );
     });
   });

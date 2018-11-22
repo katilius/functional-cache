@@ -1,5 +1,5 @@
-const InMemoryCacheProvider = require("./providers/InMemoryCacheProvider");
-const keyGenerators = require("./keyGenerators");
+const InMemoryCacheProvider = require('./providers/InMemoryCacheProvider');
+const keyGenerators = require('./keyGenerators');
 
 const defaultConfig = {
   keyGenerator: keyGenerators.pickFirstArgument,
@@ -37,7 +37,7 @@ module.exports = class CacheFactory {
       try {
         value = await this.cache.get(key);
       } catch (e) {
-        this.logger.error("Could not get value from cache", e);
+        this.logger.error('Could not get value from cache', e);
         return await fn(...args);
       }
       if (value !== undefined) {
@@ -47,7 +47,7 @@ module.exports = class CacheFactory {
         try {
           await this.cache.set(key, value);
         } catch (e) {
-          this.logger.error("Could not set value in cache", e);
+          this.logger.error('Could not set value in cache', e);
         }
         return value;
       }
@@ -64,7 +64,7 @@ module.exports = class CacheFactory {
       try {
         await this.cache.remove(key);
       } catch (e) {
-        this.logger.error("Could not remove log entry", e);
+        this.logger.error('Could not remove log entry', e);
       }
       return fn(...args);
     }.bind(this);
@@ -81,7 +81,7 @@ module.exports = class CacheFactory {
       try {
         await this.cache.set(key, result);
       } catch (e) {
-        this.logger.error("Could not add value to cache", e);
+        this.logger.error('Could not add value to cache', e);
       }
       return result;
     }.bind(this);

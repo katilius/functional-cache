@@ -1,4 +1,4 @@
-const LRU = require("lru-cache");
+const LRU = require('lru-cache');
 module.exports = class InMemoryCacheProvider {
   constructor(options) {
     this.cache = LRU(options);
