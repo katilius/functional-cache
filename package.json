@@ -1,6 +1,6 @@
 {
   "name": "functional-cache",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Set of utility functions that let you decorate functions with cache",
   "main": "./dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "babel ./src -d ./dist --ignore **/*.test.js",
     "test": "jest",
     "clean": "rimraf dist",
-    "test:publish-coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "test:publish-coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "format": "prettier --write \"src/**/*.js\""
   },
   "repository": {
     "type": "git",
