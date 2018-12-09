@@ -1,6 +1,5 @@
 # Functional Cache [![Build Status](https://travis-ci.org/katilius/functional-cache.svg?branch=master)](https://travis-ci.org/katilius/functional-cache) [![Coverage Status](https://coveralls.io/repos/github/katilius/functional-cache/badge.svg?branch=master)](https://coveralls.io/github/katilius/functional-cache?branch=master) [![npm version](https://badge.fury.io/js/functional-cache.svg)](https://badge.fury.io/js/functional-cache)
 
-
 Collection of helper functions that help you cache long running functions. Main goal of this library is to separate concerns between caching and business logic. It is inspired by functional programming memoization pattern, which let's you simply wrap function and optimize performance.
 
 For example, you most probably written similar code:
@@ -13,7 +12,8 @@ function getBooks(type) {
   if (cachedValue) {
     return Promise.resolve(cachedValue);
   } else {
-    return getBooksFromApi(type);cacheCalls
+    return getBooksFromApi(type);
+    cacheCalls;
   }
 }
 ```
@@ -21,7 +21,7 @@ function getBooks(type) {
 With this library you can simply write:
 
 ```javascript
-const cacheFactory = require("functional-cache"); 
+const cacheFactory = require('functional-cache');
 const cache = cacheFactory.createNew();
 const getBooks = cache.cacheCalls(getBooksFromApi);
 ```
@@ -29,13 +29,19 @@ const getBooks = cache.cacheCalls(getBooksFromApi);
 Aim of this library is to keep original source code the same and encourage extracting all cache related logic to separate functions. With this in mind, these are more advanced features, that are supported:
 
 ## Features
+
 - Cache eviction (with conditional eviction)
 - Custom cache key selection (built in helpers provided)
 - Conditional caching
 
 **Important**
 
-All wrapped functions should return promise/be async. 
+All wrapped functions should return promise/be async.
+
+## Custom cache providers
+
+- [Redis](https://www.npmjs.com/package/functional-cache-redis)
+
 ## Cache creation
 
 ```javascript
@@ -56,6 +62,7 @@ By default it will use in-memory cache with 1 minute TTL. This easily configured
 ### `cacheCalls(function, options)`
 
 Supported options:
+
 - `keyGenerator` - by default first argument of call is used, this lets customize key generation. It gets all original function arguments and has to result in cache key.
 - `skipIf` - used for conditional caching, takes all original function arguments and returns boolean value if value should be skipped from cache.
 
@@ -73,13 +80,13 @@ Then:
 
 ```javascript
 // call API and write to cache
-getFavoriteBooks("scifi");
+getFavoriteBooks('scifi');
 // get from cache
-getFavoriteBooks("scifi");
+getFavoriteBooks('scifi');
 // removed from cache
-addToFavorites("scifi", "Hitchhiker's Guide Through the Galaxy");
+addToFavorites('scifi', "Hitchhiker's Guide Through the Galaxy");
 // call API again and write to cache
-addToFavorites("scifi", "Hitchhiker's Guide Through the Galaxy");
+addToFavorites('scifi', "Hitchhiker's Guide Through the Galaxy");
 ```
 
 ### `addResultToCache(fn, options)`
@@ -90,7 +97,7 @@ Similar to `cacheCalls`, but it never interferes with function execution, it jus
 const cache = cacheFactory.createNew();
 const getUserDetails = cache.cacheCalls(getUserFromDb);
 const updateUserDetails = cache.addResultToCache(updateUserInDb);
-``` 
+```
 
 ## Advanced usage
 
@@ -102,12 +109,14 @@ You set any cache provider there, as long as it's adheres to defined interfaces.
 If you want to use same LRU cache, but with different settings, you can do it this way:
 
 ```javascript
-const cacheFactory = require("functional-cache"); 
-const {InMemoryCacheProvider} = require("functional-cache"); 
-const cache = cacheFactory.createNew(new InMemoryCacheProvider({maxAge: 1000 * 60 * 60}));
+const cacheFactory = require('functional-cache');
+const { InMemoryCacheProvider } = require('functional-cache');
+const cache = cacheFactory.createNew(
+  new InMemoryCacheProvider({ maxAge: 1000 * 60 * 60 })
+);
 ```
 
-First parameter of `InMemoryCacheProvider` is `options`. Guide to available options is in original wrapped library [lru cache](https://www.npmjs.com/package/lru-cache) 
+First parameter of `InMemoryCacheProvider` is `options`. Guide to available options is in original wrapped library [lru cache](https://www.npmjs.com/package/lru-cache)
 
 ### Key generators
 
@@ -117,28 +126,28 @@ By default it uses first argument to pass along to cache key. However not always
 You can use one of predefined key generators like this:
 
 ```javascript
-const cacheFactory = require("functional-cache"); 
-const {keyGenerators} = require("functional-cache"); 
+const cacheFactory = require('functional-cache');
+const { keyGenerators } = require('functional-cache');
 
 // pick argument with index '1'
 const options = { keyGenerator: keyGenerators.pickNthArgument(1) };
 const getUserBooks = cache.cacheCalls(getUserBooksFromApi, options);
 
 // user id will be used as a cache key
-getUserBooks("some value", userId)
+getUserBooks('some value', userId);
 ```
 
 Key generator is just a function that gets all parameters from original call, so custom generator can be used:
 
 ```javascript
-const cacheFactory = require("functional-cache"); 
+const cacheFactory = require('functional-cache');
 
 const pickUserName = (date, user) => user.username.toLowerCase();
 const options = { keyGenerator: pickUserName };
 const getUserBooks = cache.cacheCalls(getUserBooksFromApi, options);
 
 // username converted to lower case will be used as a cache key
-getUserBooks("some value", user)
+getUserBooks('some value', user);
 ```
 
 ### Conditional caching/eviction
@@ -146,12 +155,11 @@ getUserBooks("some value", user)
 You might need to not cache certain values and use value directly from cache based on function arguments. Option `skipIf` allows that. Same as `keyGenerator` it gets all original call arguments. If returned value is true, then caching logic is skipped. For example:
 
 ```javascript
-const cacheFactory = require("functional-cache"); 
+const cacheFactory = require('functional-cache');
 
 const options = { skipIf: (category, user) => user.role === 'ADMIN' };
 const getFavoriteBooks = cache.cacheCalls(getFromApi, options);
 
 // if user is admin, it will always get values from API
-getUserBooks("sci-fi", user)
-
+getUserBooks('sci-fi', user);
 ```

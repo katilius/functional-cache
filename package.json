@@ -1,6 +1,6 @@
 {
   "name": "functional-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Set of utility functions that let you decorate functions with cache",
   "main": "./dist/index.js",
   "scripts": {
