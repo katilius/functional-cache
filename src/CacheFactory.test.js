@@ -94,6 +94,20 @@ describe('CacheFactory', () => {
       );
     });
 
+    it('calls original function if cache returns null', async () => {
+      originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
+      const mockCache = {
+        set: jest.fn().mockReturnValue(Promise.resolve()),
+        get: jest.fn().mockReturnValue(Promise.resolve(null))
+      };
+      const cache = cacheFactory.createNew(mockCache);
+      const cachedFn = cache.cacheCalls(originalFunction);
+
+      expect(await cachedFn(44)).toEqual(TEST_VALUE_1);
+
+      expect(originalFunction).toHaveBeenCalledTimes(1);
+    });
+
     it('does not fail call if setting cache value fails', async () => {
       originalFunction.mockReturnValue(Promise.resolve(TEST_VALUE_1));
       const mockCache = {

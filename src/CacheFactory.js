@@ -40,7 +40,8 @@ module.exports = class CacheFactory {
         this.logger.error('Could not get value from cache', e);
         return await fn(...args);
       }
-      if (value !== undefined) {
+
+      if (value !== undefined && value !== null) {
         return value;
       } else {
         const value = await fn(...args);
